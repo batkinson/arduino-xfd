@@ -15,7 +15,8 @@ char apiPath[] = "/api/json?tree=jobs[color]";
 
 const int redPin = 22;
 const int greenPin = 26;
-const int yellowPin = 30;
+const int yellowPin = 24;
+const int buzzerPin = 52;
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server 
@@ -189,6 +190,7 @@ void signalUpdate() {
  */
 void signalResult(int result) {
   if (result != lastResult) {
+    if (result == 0) { beepOk(); } else { beepFailure(); }
     Serial.println("new result, signalling");
     for (int i=0; i<10; i++) {
       boolean light = i % 2 == 0;
@@ -211,6 +213,30 @@ void wait(long waitmillis) {
   Serial.print(waitmillis / 1000);
   Serial.println(" seconds");
   delay(waitmillis);
+}
+
+/**
+ * Sounds a buzzer to indicate a failure status.
+ */
+void beepFailure() {
+   for (int i = 0; i < 4; i++) {
+    tone(buzzerPin, 325);
+    delay(250);
+    noTone(buzzerPin);
+    delay(250);
+  }
+}
+
+/**
+ * Sounds a buzzer to indicate success status.
+ */
+void beepOk() {
+  for (int i = 0; i < 2; i++) {
+    tone(buzzerPin, 325);
+    delay(100);
+    noTone(buzzerPin);
+    delay(100);
+  }
 }
 
 /**
